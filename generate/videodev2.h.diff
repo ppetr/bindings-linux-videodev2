@@ -1,0 +1,204 @@
+--- /usr/include/linux/videodev2.h	2011-04-21 00:30:06.000000000 +0100
++++ videodev2.h	2011-07-03 04:08:45.000000000 +0100
+@@ -396,16 +396,15 @@
+ 	__u32			step_height;	/* Frame height step size [pixel] */
+ };
+ 
++union v4l2_frmsizeenum_u {					/* Frame size */
++	struct v4l2_frmsize_discrete	discrete;
++	struct v4l2_frmsize_stepwise	stepwise;
++};
+ struct v4l2_frmsizeenum {
+ 	__u32			index;		/* Frame size number */
+ 	__u32			pixel_format;	/* Pixel format */
+ 	__u32			type;		/* Frame size type the device supports. */
+-
+-	union {					/* Frame size */
+-		struct v4l2_frmsize_discrete	discrete;
+-		struct v4l2_frmsize_stepwise	stepwise;
+-	};
+-
++	union v4l2_frmsizeenum_u u;
+ 	__u32   reserved[2];			/* Reserved space for future use */
+ };
+ 
+@@ -424,18 +423,17 @@
+ 	struct v4l2_fract	step;		/* Frame interval step size [s] */
+ };
+ 
++union v4l2_frmivalenum_u {					/* Frame interval */
++		struct v4l2_fract		discrete;
++		struct v4l2_frmival_stepwise	stepwise;
++};
+ struct v4l2_frmivalenum {
+ 	__u32			index;		/* Frame format index */
+ 	__u32			pixel_format;	/* Pixel format */
+ 	__u32			width;		/* Frame width */
+ 	__u32			height;		/* Frame height */
+ 	__u32			type;		/* Frame interval type the device supports. */
+-
+-	union {					/* Frame interval */
+-		struct v4l2_fract		discrete;
+-		struct v4l2_frmival_stepwise	stepwise;
+-	};
+-
++	union v4l2_frmivalenum_u u;
+ 	__u32	reserved[2];			/* Reserved space for future use */
+ };
+ #endif
+@@ -488,6 +486,7 @@
+ 				 * The presence of the APP and COM marker
+ 				 * is influenced by APP_len and COM_len
+ 				 * ONLY, not by this property! */
++};
+ 
+ #define V4L2_JPEG_MARKER_DHT (1<<3)    /* Define Huffman Tables */
+ #define V4L2_JPEG_MARKER_DQT (1<<4)    /* Define Quantization Tables */
+@@ -495,7 +494,6 @@
+ #define V4L2_JPEG_MARKER_COM (1<<6)    /* Comment segment */
+ #define V4L2_JPEG_MARKER_APP (1<<7)    /* App segment, driver will
+ 					* allways use APP0 */
+-};
+ 
+ /*
+  *	M E M O R Y - M A P P I N G   B U F F E R S
+@@ -507,6 +505,10 @@
+ 	__u32			reserved[2];
+ };
+ 
++union v4l2_buffer_u {
++		__u32           offset;
++		unsigned long   userptr;
++} m;
+ struct v4l2_buffer {
+ 	__u32			index;
+ 	enum v4l2_buf_type      type;
+@@ -519,10 +521,7 @@
+ 
+ 	/* memory location */
+ 	enum v4l2_memory        memory;
+-	union {
+-		__u32           offset;
+-		unsigned long   userptr;
+-	} m;
++	union v4l2_buffer_u u;
+ 	__u32			length;
+ 	__u32			input;
+ 	__u32			reserved;
+@@ -789,15 +788,16 @@
+ 	__s32		     value;
+ };
+ 
+-struct v4l2_ext_control {
+-	__u32 id;
+-	__u32 size;
+-	__u32 reserved2[1];
+-	union {
++union v4l2_ext_control_u {
+ 		__s32 value;
+ 		__s64 value64;
+ 		char *string;
+ 	};
++struct v4l2_ext_control {
++	__u32 id;
++	__u32 size;
++	__u32 reserved2[1];
++	union v4l2_ext_control_u u;
+ } __attribute__ ((packed));
+ 
+ struct v4l2_ext_controls {
+@@ -1336,14 +1336,16 @@
+ /* Flags for V4L2_ENC_CMD_STOP */
+ #define V4L2_ENC_CMD_STOP_AT_GOP_END    (1 << 0)
+ 
++struct v4l2_encoder_cmd_u_s {
++			__u32 data[8];
++};
++union v4l2_encoder_cmd_u {
++	struct v4l2_encoder_cmd_u_s raw;
++};
+ struct v4l2_encoder_cmd {
+ 	__u32 cmd;
+ 	__u32 flags;
+-	union {
+-		struct {
+-			__u32 data[8];
+-		} raw;
+-	};
++  union v4l2_encoder_cmd_u u;
+ };
+ 
+ #endif
+@@ -1460,12 +1462,13 @@
+ #define V4L2_MPEG_VBI_IVTV_MAGIC0	"itv0"
+ #define V4L2_MPEG_VBI_IVTV_MAGIC1	"ITV0"
+ 
+-struct v4l2_mpeg_vbi_fmt_ivtv {
+-	__u8 magic[4];
+-	union {
++union v4l2_mpeg_vbi_fmt_ivtv_u {
+ 		struct v4l2_mpeg_vbi_itv0 itv0;
+ 		struct v4l2_mpeg_vbi_ITV0 ITV0;
+ 	};
++struct v4l2_mpeg_vbi_fmt_ivtv {
++	__u8 magic[4];
++	union v4l2_mpeg_vbi_fmt_ivtv_u u;
+ } __attribute__ ((packed));
+ 
+ /*
+@@ -1474,27 +1477,30 @@
+ 
+ /*	Stream data format
+  */
+-struct v4l2_format {
+-	enum v4l2_buf_type type;
+-	union {
++union v4l2_format_u {
+ 		struct v4l2_pix_format		pix;     /* V4L2_BUF_TYPE_VIDEO_CAPTURE */
+ 		struct v4l2_window		win;     /* V4L2_BUF_TYPE_VIDEO_OVERLAY */
+ 		struct v4l2_vbi_format		vbi;     /* V4L2_BUF_TYPE_VBI_CAPTURE */
+ 		struct v4l2_sliced_vbi_format	sliced;  /* V4L2_BUF_TYPE_SLICED_VBI_CAPTURE */
+ 		__u8	raw_data[200];                   /* user-defined */
+-	} fmt;
++};
++
++struct v4l2_format {
++	enum v4l2_buf_type type;
++	union v4l2_format_u fmt;
+ };
+ 
+ 
+ /*	Stream type-dependent parameters
+  */
+-struct v4l2_streamparm {
+-	enum v4l2_buf_type type;
+-	union {
++union v4l2_streamparm_u {
+ 		struct v4l2_captureparm	capture;
+ 		struct v4l2_outputparm	output;
+ 		__u8	raw_data[200];  /* user-defined */
+-	} parm;
++};
++struct v4l2_streamparm {
++	enum v4l2_buf_type type;
++	union v4l2_streamparm_u parm;
+ };
+ 
+ /*
+@@ -1511,12 +1517,13 @@
+ #define V4L2_CHIP_MATCH_I2C_ADDR   2  /* Match against I2C 7-bit address */
+ #define V4L2_CHIP_MATCH_AC97       3  /* Match against anciliary AC97 chip */
+ 
+-struct v4l2_dbg_match {
+-	__u32 type; /* Match type */
+-	union {     /* Match this chip, meaning determined by type */
++union v4l2_dbg_match_u {     /* Match this chip, meaning determined by type */
+ 		__u32 addr;
+ 		char name[32];
+ 	};
++struct v4l2_dbg_match {
++	__u32 type; /* Match type */
++	union v4l2_dbg_match_u u;
+ } __attribute__ ((packed));
+ 
+ struct v4l2_dbg_register {
