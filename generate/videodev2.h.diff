@@ -1,5 +1,5 @@
 --- /usr/include/linux/videodev2.h	2011-04-21 00:30:06.000000000 +0100
-+++ videodev2.h	2011-07-03 04:08:45.000000000 +0100
++++ ../bindings-linux-videodev2/Bindings/Linux/videodev2.h	2011-07-03 14:35:44.000000000 +0100
 @@ -396,16 +396,15 @@
  	__u32			step_height;	/* Frame height step size [pixel] */
  };
@@ -69,7 +69,7 @@
 +union v4l2_buffer_u {
 +		__u32           offset;
 +		unsigned long   userptr;
-+} m;
++};
  struct v4l2_buffer {
  	__u32			index;
  	enum v4l2_buf_type      type;
@@ -89,21 +89,21 @@
  	__s32		     value;
  };
  
--struct v4l2_ext_control {
--	__u32 id;
--	__u32 size;
--	__u32 reserved2[1];
--	union {
 +union v4l2_ext_control_u {
- 		__s32 value;
- 		__s64 value64;
- 		char *string;
- 	};
-+struct v4l2_ext_control {
-+	__u32 id;
-+	__u32 size;
-+	__u32 reserved2[1];
-+	union v4l2_ext_control_u u;
++	__s32 value;
++	__s64 value64;
++	char *string;
++} __attribute__ ((packed));
+ struct v4l2_ext_control {
+ 	__u32 id;
+ 	__u32 size;
+ 	__u32 reserved2[1];
+-	union {
+-		__s32 value;
+-		__s64 value64;
+-		char *string;
+-	};
++  union v4l2_ext_control_u u;
  } __attribute__ ((packed));
  
  struct v4l2_ext_controls {
@@ -139,7 +139,8 @@
 +union v4l2_mpeg_vbi_fmt_ivtv_u {
  		struct v4l2_mpeg_vbi_itv0 itv0;
  		struct v4l2_mpeg_vbi_ITV0 ITV0;
- 	};
+-	};
++} __attribute__ ((packed));
 +struct v4l2_mpeg_vbi_fmt_ivtv {
 +	__u8 magic[4];
 +	union v4l2_mpeg_vbi_fmt_ivtv_u u;
@@ -195,10 +196,11 @@
 +union v4l2_dbg_match_u {     /* Match this chip, meaning determined by type */
  		__u32 addr;
  		char name[32];
- 	};
+-	};
++} __attribute__ ((packed));
 +struct v4l2_dbg_match {
 +	__u32 type; /* Match type */
-+	union v4l2_dbg_match_u u;
++  union v4l2_dbg_match_u u;
  } __attribute__ ((packed));
  
  struct v4l2_dbg_register {
