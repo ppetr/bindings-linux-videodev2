@@ -7,9 +7,9 @@ cat <<EOF
 #include <bindings.cmacros.h>
 #include "videodev2.h"
 BC_INLINE4(v4l2_fourcc,__u8,__u8,__u8,__u8,__u32)
-BC_INLINE1(V4L_FIELD_HAS_TOP,enum v4l2_field,int)
-BC_INLINE1(V4L_FIELD_HAS_BOTTOM,enum v4l2_field,int)
-BC_INLINE1(V4L_FIELD_HAS_BOTH,enum v4l2_field,int)
+BC_INLINE1(V4L2_FIELD_HAS_TOP,enum v4l2_field,int)
+BC_INLINE1(V4L2_FIELD_HAS_BOTTOM,enum v4l2_field,int)
+BC_INLINE1(V4L2_FIELD_HAS_BOTH,enum v4l2_field,int)
 BC_INLINE1(V4L2_CTRL_ID2CLASS,__u32,__u32)
 BC_INLINE1(V4L2_CTRL_DRIVER_PRIV,__u32,__u32)
 EOF
@@ -21,7 +21,7 @@ EOF
 #include <bindings.dsl.h>
 #include <sys/time.h>
 #include "videodev2.h"
--- | Bindings for Video For Linux Two, wrapping:
+-- | Bindings for Video For Linux Two (v4l2), wrapping:
 --   <file:///usr/include/linux/videodev2.h>
 --   Upstream documentation at:
 --   <http://linuxtv.org/downloads/v4l-dvb-apis/>
