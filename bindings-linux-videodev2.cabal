@@ -1,5 +1,5 @@
 Name:                bindings-linux-videodev2
-Version:             0.1
+Version:             0.2
 Synopsis:            bindings to Video For Linux Two (v4l2) kernel interfaces
 
 Description:
@@ -7,6 +7,9 @@ Description:
   <file:///usr/include/linux/videodev2.h>
   Upstream documentation at:
   <http://linuxtv.org/downloads/v4l-dvb-apis/>
+  .
+  Kernel development headers are required to build this package.
+  On Debian-based systems these can be found in linux-libc-dev.
 
 Homepage:            https://gitorious.org/hsv4l2
 License:             BSD3
