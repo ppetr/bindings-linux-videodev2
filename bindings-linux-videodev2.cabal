@@ -1,5 +1,5 @@
 Name:                bindings-linux-videodev2
-Version:             0.2
+Version:             0.2.0.1
 Synopsis:            bindings to Video For Linux Two (v4l2) kernel interfaces
 
 Description:
