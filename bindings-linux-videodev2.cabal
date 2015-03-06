@@ -11,7 +11,7 @@ Description:
   Kernel development headers are required to build this package.
   On Debian-based systems these can be found in linux-libc-dev.
 
-Homepage:            https://gitorious.org/hsv4l2
+Homepage:            http://code.mathr.co.uk/bindings-linux-videodev2
 License:             BSD3
 License-file:        LICENSE
 Author:              Claude Heiland-Allen
